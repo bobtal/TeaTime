@@ -17,6 +17,8 @@
 package com.example.android.teatime;
 
 
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -26,6 +28,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.action.ViewActions.click;
+import static org.hamcrest.CoreMatchers.anything;
 
 /**
  * Usually Espresso syncs all view operations with the UI thread as well as AsyncTasks, but it can't
@@ -62,22 +68,31 @@ public class IdlingResourceMenuActivityTest {
     private IdlingResource mIdlingResource;
 
 
-    // TODO (6) Registers any resource that needs to be synchronized with Espresso before
+    // COMPLETED (6) Registers any resource that needs to be synchronized with Espresso before
     // the test is run.
     @Before
     public void registerIdlingResource() {
+        mIdlingResource = mActivityTestRule.getActivity().getIdlingResource();
 
+        Espresso.registerIdlingResources(mIdlingResource);
+        // Alternative for the deprecated registerIdlingResources method
+//        IdlingRegistry.getInstance().register(mIdlingResource);
     }
 
-    // TODO (7) Test that the gridView with Tea objects appears and we can click a gridView item
+    // COMPLETED (7) Test that the gridView with Tea objects appears and we can click a gridView item
     @Test
     public void idlingResourceTest() {
+        onData(anything()).atPosition(1).perform(click());
 
     }
 
-    // TODO (8) Unregister resources when not needed to avoid malfunction
+    // COMPLETED (8) Unregister resources when not needed to avoid malfunction
     @After
     public void unregisterIdlingResource() {
-
+        if (mIdlingResource != null) {
+            Espresso.unregisterIdlingResources(mIdlingResource);
+            // Alternative for the deprecated registerIdlingResources method
+//            IdlingRegistry.getInstance().unregister(mIdlingResource);
+        }
     }
 }
